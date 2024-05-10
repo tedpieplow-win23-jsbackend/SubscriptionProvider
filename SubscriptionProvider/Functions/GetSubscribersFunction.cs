@@ -22,26 +22,32 @@ namespace SubscriptionProvider.Functions
                 
                 if (body == null)
                 {
-                    var getAllResult = await _subscribeService.GetAllSubscribersAsync();
-                    if (getAllResult.StatusCode == StatusCode.OK)
-                        return new OkObjectResult((IEnumerable<SubscriberEntity>)getAllResult.ContentResult!);
-                    else if (getAllResult.StatusCode == StatusCode.NOT_FOUND)
-                        return new OkResult();
+
                 }
                 else if(body != null)
-                //{
-                //    var testResult = _subscribeService.BodyChecker(body);
-                //    if(testResult.StatusCode ==  StatusCode.OK)
-                //    var populateResult = _subscribeService.PopulateAndValidateBodyToSubscriberEntity(body);
-                //    if (populateResult.StatusCode == StatusCode.OK)
-                //    {
-                //        var entity = (SubscriberEntity)populateResult.ContentResult!;
-                //        var getResult = await _subscribeService.GetOneSubscriberAsync(entity.Email);
-                //        if (getResult.StatusCode == StatusCode.OK)
-                //            return new OkObjectResult((SubscriberEntity)getResult.ContentResult!);
-                //        return new OkResult();
-                //    }
-                //}
+                {
+                    var testResult = await _subscribeService.BodyChecker(body);
+                    if (testResult.StatusCode == StatusCode.OK)
+                    {
+                        var populateResult = _subscribeService.PopulateAndValidateBodyToSubscriberEntity(body);
+                        if (populateResult.StatusCode == StatusCode.OK)
+                        {
+                            var entity = (SubscriberEntity)populateResult.ContentResult!;
+                            var getResult = await _subscribeService.GetOneSubscriberAsync(entity.Email);
+                            if (getResult.StatusCode == StatusCode.OK)
+                                return new OkObjectResult((SubscriberEntity)getResult.ContentResult!);
+                            return new NotFoundResult();
+                        }
+                    }
+                    else if (testResult.StatusCode == StatusCode.ERROR)
+                    {
+                        var getAllResult = await _subscribeService.GetAllSubscribersAsync();
+                        if (getAllResult.StatusCode == StatusCode.OK)
+                            return new OkObjectResult((IEnumerable<SubscriberEntity>)getAllResult.ContentResult!);
+                        else if (getAllResult.StatusCode == StatusCode.NOT_FOUND)
+                            return new NotFoundResult();
+                    }
+                }
                 return new BadRequestResult();
             }
             catch (Exception ex)
