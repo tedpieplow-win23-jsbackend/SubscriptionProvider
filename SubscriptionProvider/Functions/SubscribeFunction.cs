@@ -30,7 +30,7 @@ namespace SubscriptionProvider.Functions
                         if (saveResult.StatusCode == StatusCode.OK)
                             return new OkResult();
                         else if (saveResult.StatusCode == StatusCode.EXISTS)
-                            return new ConflictResult();
+                            return new StatusCodeResult(StatusCodes.Status409Conflict);
                     }
                 }
                 return new BadRequestResult();
