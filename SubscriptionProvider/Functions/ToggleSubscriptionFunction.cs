@@ -21,21 +21,21 @@ namespace SubscriptionProvider.Functions
                 var body = await new StreamReader(req.Body).ReadToEndAsync();
                 if (body != null)
                 {
-                    var entityResult = _subscribeService.PopulateAndValidateBodyToSubscriberEntity(body);
-                    if (entityResult.StatusCode == StatusCode.OK)
+                    var modelResult = _subscribeService.PopulateAndValidateToggleSubscriberModel(body);
+                    if (modelResult.StatusCode == StatusCode.OK)
                     {
-                        var entity = (SubscriberEntity)entityResult.ContentResult!;
-                        var toggleResult = await _subscribeService.ToggleSubscriptionAsync(entity);
+                        var model = (ToggleSubscriberModel)modelResult.ContentResult!;
+                        var toggleResult = await _subscribeService.ToggleSubscriptionAsync(model);
                         if (toggleResult.StatusCode == StatusCode.OK)
-                        {
                             return new OkResult();
-                        }
+                        else if (toggleResult.StatusCode == StatusCode.EXISTS) 
+                            return new ConflictResult();
                     }
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogDebug($"ERROR :: SubcriptionProvider.SubscriberFunction.Run() : {ex.Message}");
+                _logger.LogDebug($"ERROR :: SubcriptionProvider.ToggleSubscriptionFunction.Run() : {ex.Message}");
             }
             return new BadRequestResult();
         }
