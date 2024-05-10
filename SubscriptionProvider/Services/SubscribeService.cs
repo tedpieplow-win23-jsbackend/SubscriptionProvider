@@ -37,7 +37,7 @@ public class SubscribeService(ILogger<SubscribeService> logger, SubscriberReposi
             var subscriberEntity = _subscriberFactory.PopulateSubscriberEntity(body);
             var result = ValidateSubscriberEntity(subscriberEntity);
             if (result.StatusCode == StatusCode.OK)
-                return ResponseFactory.Ok((SubscriberEntity)result.ContentResult!);
+                return ResponseFactory.Ok(subscriberEntity);
             return ResponseFactory.Error();
         }
         catch (Exception ex)

@@ -7,6 +7,7 @@ public class SubscriberFactory
 {
     public SubscriberEntity PopulateSubscriberEntity(string body)
     {
+
         return JsonSerializer.Deserialize<SubscriberEntity>(body)!;
     }
 }
