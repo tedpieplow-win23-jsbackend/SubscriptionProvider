@@ -103,6 +103,7 @@ public class SubscribeService(ILogger<SubscribeService> logger, SubscriberReposi
             var existsResult = await CheckIfSubscribedAsync(entity.Email);
             if (existsResult.StatusCode == StatusCode.NOT_FOUND)
             {
+                entity.IsSubscribed = true;
                 var saveResult = await _repo.CreateAsync(entity);
                 if (saveResult.StatusCode == StatusCode.OK)
                     return ResponseFactory.Ok();
