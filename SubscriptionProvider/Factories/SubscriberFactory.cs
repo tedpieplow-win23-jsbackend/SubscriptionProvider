@@ -11,6 +11,20 @@ public class SubscriberFactory
     {
         return JsonConvert.DeserializeObject<SubscriberEntity>(body)!;
     }
+    public SubscriberEntity PopulateSubscriberEntity(string email, bool isSubscribed)
+    {
+        return new SubscriberEntity
+        {
+            Email = email,
+            IsSubscribed = isSubscribed,
+            DailyNewsLetter = true,
+            AdvertisingUpdates = true,
+            WeekInReviews = true,
+            EventUpdates = true,
+            StartupsWeekly = true,
+            Podcasts = true
+        };
+    }
     public ToggleSubscriberModel PopulateToggleSubscriberModel(string body)
     {
         return JsonConvert.DeserializeObject<ToggleSubscriberModel>(body)!;

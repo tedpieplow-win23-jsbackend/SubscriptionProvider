@@ -137,6 +137,13 @@ public class SubscribeService(ILogger<SubscribeService> logger, SubscriberReposi
                 else if (model.IsSubscribed == entity.IsSubscribed)
                     return ResponseFactory.Exists();
             }
+            else if(checkResult.StatusCode == StatusCode.NOT_FOUND)
+            {
+                var entity = _subscriberFactory.PopulateSubscriberEntity(model.Email, model.IsSubscribed);
+                var saveResult = await _repo.CreateAsync(entity);
+                if (saveResult.StatusCode == StatusCode.OK)
+                    return ResponseFactory.Ok();
+            }
             return ResponseFactory.Error();
         }
         catch (Exception ex)
