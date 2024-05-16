@@ -4,6 +4,7 @@ using SubscriptionProvider.Factories;
 using SubscriptionProvider.Helpers;
 using SubscriptionProvider.Models;
 using SubscriptionProvider.Repositories;
+using System.Text.Json.Nodes;
 using static Grpc.Core.Metadata;
 
 namespace SubscriptionProvider.Services;
@@ -212,5 +213,39 @@ public class SubscribeService(ILogger<SubscribeService> logger, SubscriberReposi
         if (subscribeEntity != null)
             return ResponseFactory.Ok();
         else return ResponseFactory.Error();
+    }
+    public async Task<ResponseResult> UpdateSubscriberAsync(SubscriberEntity entity)
+    {
+        try
+        {
+            var updateResult = await _repo.UpdateAsync(x => x.Email == entity.Email, entity);
+            if (updateResult.StatusCode == StatusCode.OK)
+                return ResponseFactory.Ok();
+            else if(updateResult.StatusCode == StatusCode.NOT_FOUND)
+                return ResponseFactory.NotFound();
+            return ResponseFactory.Error();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogDebug($"ERROR :: SubcriptionProvider.SubscribeService.UpdateSubscriberAsync() : {ex.Message}");
+            return ResponseFactory.Error(ex.Message);
+        }
+    }
+    public async Task<ResponseResult> DeleteSubscriberAsync(SubscriberEntity entity)
+    {
+        try
+        {
+            var deleteResult = await _repo.DeleteAsync(x => x.Email == entity.Email);
+            if (deleteResult.StatusCode == StatusCode.OK)
+                return ResponseFactory.Ok();
+            else if (deleteResult.StatusCode == StatusCode.NOT_FOUND)
+                return ResponseFactory.NotFound();
+            return ResponseFactory.Error();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogDebug($"ERROR :: SubcriptionProvider.SubscribeService.UpdateSubscriberAsync() : {ex.Message}");
+            return ResponseFactory.Error(ex.Message);
+        }
     }
 }
