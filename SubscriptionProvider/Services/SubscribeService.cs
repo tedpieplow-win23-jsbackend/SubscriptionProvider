@@ -133,10 +133,10 @@ public class SubscribeService(ILogger<SubscribeService> logger, SubscriberReposi
                     entity.IsSubscribed = model.IsSubscribed;
                     var updateResult = await _repo.UpdateAsync(x => x.Email == entity.Email, entity);
                     if (updateResult.StatusCode == StatusCode.OK)
-                        return ResponseFactory.Ok("Subscription status changed");
+                        return ResponseFactory.Ok((SubscriberEntity)updateResult.ContentResult!, "Subscription status changed");
                 }
                 else if (model.IsSubscribed == entity.IsSubscribed)
-                    return ResponseFactory.Exists();
+                    return ResponseFactory.Exists(entity);
             }
             else if(checkResult.StatusCode == StatusCode.NOT_FOUND)
             {

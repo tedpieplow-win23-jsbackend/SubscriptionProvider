@@ -27,9 +27,9 @@ namespace SubscriptionProvider.Functions
                         var model = (ToggleSubscriberModel)modelResult.ContentResult!;
                         var toggleResult = await _subscribeService.ToggleSubscriptionAsync(model);
                         if (toggleResult.StatusCode == StatusCode.OK)
-                            return new OkResult();
+                            return new OkObjectResult((SubscriberEntity)toggleResult.ContentResult!);
                         else if (toggleResult.StatusCode == StatusCode.EXISTS) 
-                            return new ConflictResult();
+                            return new ConflictObjectResult((SubscriberEntity)toggleResult.ContentResult!);
                     }
                 }
             }
